@@ -6,29 +6,29 @@ import java.util.Optional;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import com.example.demo.model.Estudent;
-import com.example.demo.repository.EstudentRepository;
+import com.example.demo.model.Student;
+import com.example.demo.repository.StudentRepository;
 
 @Service
-public class EstudentServiceImpl implements EstudentService{
+public class StudentServiceImpl implements StudentService{
     
     @Autowired
-    private EstudentRepository estudentRepository;
+    private StudentRepository estudentRepository;
 
     @Override
-    public List<Estudent> findEstudentAll() {
+    public List<Student> findEstudentAll() {
         
         return estudentRepository.findAll();
     }
 
     @Override
-    public Estudent createEstudent(Estudent estudent) {
+    public Student createEstudent(Student estudent) {
         
         return estudentRepository.saveAndFlush(estudent);
     }
 
     @Override
-    public Estudent updateEstuden(Estudent estudent) {
+    public Student updateEstuden(Student estudent) {
         return estudentRepository.save(estudent);
         
     }
@@ -39,7 +39,7 @@ public class EstudentServiceImpl implements EstudentService{
     }
 
     @Override
-    public Optional<Estudent> getEstudent(Long id) {
+    public Optional<Student> getEstudent(Long id) {
        return estudentRepository.findById(id);
     }
     

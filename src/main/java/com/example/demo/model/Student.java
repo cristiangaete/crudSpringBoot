@@ -13,23 +13,29 @@ import lombok.Data;
 import lombok.EqualsAndHashCode;
 import lombok.NoArgsConstructor;
 
-@EqualsAndHashCode(callSuper=false)
+@EqualsAndHashCode(callSuper = false)
 @Builder
 @AllArgsConstructor
 @NoArgsConstructor
 @Entity
 @Data
-@Table(name="tbl_estudiante")
-public class Estudent {
+@Table(name = "tbl_estudiante")
+public class Student {
         @Id
         @GeneratedValue(strategy = GenerationType.AUTO)
         Long id;
 
-        @Column(name="nombres")
+        @Column(name = "nombres")
         String nombres;
-        @Column(name="apellidos")
+        @Column(name = "apellidos")
         String apellidos;
 
-        @Column(name="edad")
+        @Column(name = "edad")
         Integer edad;
+
+        @Override
+        public String toString() {
+                return String
+                                .valueOf(id + " ," + nombres + " ," + apellidos + " ," + edad);
+        }
 }
