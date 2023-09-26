@@ -14,7 +14,9 @@ import javax.servlet.http.HttpServletResponse;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -26,7 +28,6 @@ import org.springframework.web.bind.annotation.RestController;
 
 import com.example.demo.dto.CorreoRequestDTO;
 import com.example.demo.dto.ResponseDTO;
-import com.example.demo.dto.ResponseMailDTO;
 import com.example.demo.dto.ResultEstudentDTO;
 import com.example.demo.exception.ModeloNotFoundException;
 import com.example.demo.model.Student;
@@ -34,6 +35,7 @@ import com.example.demo.service.EmailService;
 import com.example.demo.service.StudentService;
 
 @RestController
+@CrossOrigin(origins = "http://localhost:8080")
 @RequestMapping("/estudents")
 public class StudentController {
 
@@ -111,6 +113,17 @@ public class StudentController {
         }
     }
 
+    @GetMapping("/dowload-cvs")
+    public void dowloadCvs(HttpServletResponse response) throws IOException {
+
+        List<String> headers = Arrays.asList("ID", "NOMBRE", "APELLIDO",
+                "EDAD");
+
+        List<Student> estudent = estudentService.findEstudentAll();
+
+        csvFunction(response, headers, estudent, "students");
+    }
+
     @PostMapping
     public ResponseEntity<ResponseDTO> crearEstudiante(@RequestBody Student estudent) {
 
@@ -122,29 +135,24 @@ public class StudentController {
         responseDTO.setResultado("¡Estudiante creado con exito!");
         responseDTO.setTimestamp(date);
         return new ResponseEntity<>(responseDTO, HttpStatus.CREATED);
-        // return new ResponseEntity<Student>(HttpStatus.CREATED);
+
     }
 
-    @PostMapping("/enviar-correo")
-    public ResponseEntity<ResponseMailDTO> enviarCorreo(HttpServletResponse response,
+    @PostMapping(value = "/enviar-correo", consumes = MediaType.ALL_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
+    public void enviarCorreo(HttpServletResponse response,
             @RequestBody CorreoRequestDTO correoRequest, String string) throws IOException {
 
-        ResponseMailDTO responseDTO = new ResponseMailDTO();
         List<String> headers = Arrays.asList("ID", "NOMBRE", "APELLIDO",
                 "EDAD");
 
         List<Student> estudent = estudentService.findEstudentAll();
 
-        Object cvs = csvFunction(response, headers, estudent, "estudents");
+        Object cvs = csvFunction(response, headers, estudent, "students");
 
         emailService.enviarCorreoConAdjunto(correoRequest.getDestinatario(), correoRequest.getAsunto(),
-                correoRequest.getCuerpo(), cvs, "estudents");
+                correoRequest.getCuerpo(), cvs, "students");
 
-        responseDTO.setCodigoRetorno(200);
-        responseDTO.setGlosaRetorno("OK");
-        responseDTO.setResultado("Correo enviado exitosamente");
-        responseDTO.setTimestamp(date);
-        return new ResponseEntity<>(responseDTO, HttpStatus.OK);
+        
     }
 
     @PutMapping("/{id}")
@@ -180,12 +188,12 @@ public class StudentController {
 
         estudentService.deleteEstudent(id);
 
-            responseDTO.setCodigoRetorno(200);
-            responseDTO.setGlosaRetorno("OK");
-            responseDTO.setResultado("Estudiante Eliminado");
-            responseDTO.setTimestamp(date);
+        responseDTO.setCodigoRetorno(200);
+        responseDTO.setGlosaRetorno("OK");
+        responseDTO.setResultado("Estudiante Eliminado");
+        responseDTO.setTimestamp(date);
         return ResponseEntity.ok(responseDTO);
-       
+
     }
 
 }
