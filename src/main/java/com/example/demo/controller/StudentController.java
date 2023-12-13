@@ -35,8 +35,9 @@ import com.example.demo.service.EmailService;
 import com.example.demo.service.StudentService;
 
 @RestController
-@CrossOrigin(origins = "http://localhost:8080")
-@RequestMapping("/estudents")
+// @CrossOrigin(origins = "http://localhost:8080")
+@CrossOrigin("*")
+@RequestMapping("/student")
 public class StudentController {
 
     @Autowired
@@ -72,7 +73,7 @@ public class StudentController {
         return csvBytes;
     }
 
-    @GetMapping
+    @GetMapping("/")
     public ResponseEntity<ResponseDTO> list() {
 
         ResultEstudentDTO resultDTO = new ResultEstudentDTO();
@@ -96,7 +97,7 @@ public class StudentController {
 
         Optional<Student> student = estudentService.getEstudent(id);
 
-        if (!student.isEmpty()) {
+        if (student != null) {
             resultDTO.setStudent(student);
             responseDTO.setCodigoRetorno(200);
             responseDTO.setGlosaRetorno("OK");
